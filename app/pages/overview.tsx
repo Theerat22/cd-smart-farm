@@ -1,6 +1,6 @@
 import React from 'react';
-import { IoWater, IoSunny, IoLeaf, IoBarChart } from "react-icons/io5";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { IoWater, IoLeaf } from "react-icons/io5";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const FarmDashboard: React.FC = () => {
 
@@ -34,14 +34,14 @@ const FarmDashboard: React.FC = () => {
     { date: 'Feb 23', percentage: 95 }
   ];
 
-  const yieldData = {
-    current: 68,
-    unit: '%',
-    status: 'Normal',
-    lastChecked: '2 hours ago',
-    change: '+4% from last month',
-    forecast: '89% expected at harvest'
-  };
+  // const yieldData = {
+  //   current: 68,
+  //   unit: '%',
+  //   status: 'Normal',
+  //   lastChecked: '2 hours ago',
+  //   change: '+4% from last month',
+  //   forecast: '89% expected at harvest'
+  // };
 
   const soilStatusColor = 
     soilData.status.toLowerCase() === 'good' || 
@@ -65,16 +65,16 @@ const FarmDashboard: React.FC = () => {
           ? 'text-red-600' 
           : 'text-blue-600';
 
-  const yieldStatusColor = 
-    yieldData.status.toLowerCase() === 'good' || 
-    yieldData.status.toLowerCase() === 'optimal' || 
-    yieldData.status.toLowerCase() === 'normal' 
-      ? 'text-green-600' 
-      : yieldData.status.toLowerCase() === 'warning' 
-        ? 'text-yellow-600' 
-        : yieldData.status.toLowerCase() === 'critical' 
-          ? 'text-red-600' 
-          : 'text-blue-600';
+  // const yieldStatusColor = 
+  //   yieldData.status.toLowerCase() === 'good' || 
+  //   yieldData.status.toLowerCase() === 'optimal' || 
+  //   yieldData.status.toLowerCase() === 'normal' 
+  //     ? 'text-green-600' 
+  //     : yieldData.status.toLowerCase() === 'warning' 
+  //       ? 'text-yellow-600' 
+  //       : yieldData.status.toLowerCase() === 'critical' 
+  //         ? 'text-red-600' 
+  //         : 'text-blue-600';
 
   return (
     <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
