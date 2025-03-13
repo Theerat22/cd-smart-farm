@@ -2,12 +2,11 @@
 
 import React, { useState } from 'react';
 import Navbar from '@/app/components/Navbar';
-import OverviewPage from '@/app/pages/overview';
+import OverviewPage from '@/app/dashboard/pages/overview';
 
 const Dashboard: React.FC = () => {
   const [activePage, setActivePage] = useState('overview');
 
-  // Render the active page
   const renderPage = () => {
     switch(activePage) {
       case 'overview': return <OverviewPage />;

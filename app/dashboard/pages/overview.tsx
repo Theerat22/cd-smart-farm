@@ -34,15 +34,6 @@ const FarmDashboard: React.FC = () => {
     { date: 'Feb 23', percentage: 95 }
   ];
 
-  // const yieldData = {
-  //   current: 68,
-  //   unit: '%',
-  //   status: 'Normal',
-  //   lastChecked: '2 hours ago',
-  //   change: '+4% from last month',
-  //   forecast: '89% expected at harvest'
-  // };
-
   const soilStatusColor = 
     soilData.status.toLowerCase() === 'good' || 
     soilData.status.toLowerCase() === 'optimal' || 
@@ -65,16 +56,6 @@ const FarmDashboard: React.FC = () => {
           ? 'text-red-600' 
           : 'text-blue-600';
 
-  // const yieldStatusColor = 
-  //   yieldData.status.toLowerCase() === 'good' || 
-  //   yieldData.status.toLowerCase() === 'optimal' || 
-  //   yieldData.status.toLowerCase() === 'normal' 
-  //     ? 'text-green-600' 
-  //     : yieldData.status.toLowerCase() === 'warning' 
-  //       ? 'text-yellow-600' 
-  //       : yieldData.status.toLowerCase() === 'critical' 
-  //         ? 'text-red-600' 
-  //         : 'text-blue-600';
 
   return (
     <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
@@ -183,77 +164,6 @@ const FarmDashboard: React.FC = () => {
         </div>
       </div>
       
-      {/* Bottom Card */}
-      {/* <div className="mt-4 sm:mt-6 bg-white rounded-xl shadow-md overflow-hidden transition-all hover:shadow-lg">
-        <div className="p-4 sm:p-6 border-b border-gray-100">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
-            <div className="flex items-center space-x-3 sm:space-x-4">
-              <div className="bg-yellow-50 p-2 sm:p-3 rounded-lg">
-                <IoBarChart className="text-2xl sm:text-3xl text-yellow-600" />
-              </div>
-              <div>
-                <h2 className="font-bold text-lg sm:text-xl text-gray-800">Projected Yield</h2>
-                <p className="text-xs sm:text-sm text-gray-500">Last updated: {yieldData.lastChecked}</p>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-3xl sm:text-4xl font-bold text-gray-800">{yieldData.current}<span className="text-lg sm:text-xl">{yieldData.unit}</span></div>
-              <p className={`font-medium ${yieldStatusColor}`}>{yieldData.status}</p>
-            </div>
-          </div>
-        </div>
-        <div className="p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <h3 className="text-xs sm:text-sm font-medium text-gray-500 mb-3">YIELD PROJECTION</h3>
-            <div className="relative h-28 sm:h-32 flex items-center justify-center">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-28 sm:w-32 h-28 sm:h-32 rounded-full border-6 sm:border-8 border-gray-200"></div>
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div 
-                  className="w-28 sm:w-32 h-28 sm:h-32 rounded-full border-6 sm:border-8 border-transparent border-t-yellow-600"
-                  style={{ transform: `rotate(${(yieldData.current / 100) * 270}deg)` }}
-                ></div>
-              </div>
-              <div className="z-10 text-xl sm:text-2xl font-bold text-gray-800">{yieldData.current}%</div>
-            </div>
-          </div>
-          <div>
-            <h3 className="text-xs sm:text-sm font-medium text-gray-500 mb-3">FORECAST</h3>
-            <div className="space-y-4">
-              <div className="p-3 bg-green-50 rounded-lg">
-                <div className="flex items-start space-x-2">
-                  <IoSunny className="text-yellow-500 mt-1 flex-shrink-0" />
-                  <div>
-                    <h4 className="font-medium text-sm text-gray-800">Harvest Forecast</h4>
-                    <p className="text-xs sm:text-sm text-gray-600">{yieldData.forecast}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="p-3 bg-blue-50 rounded-lg">
-                <div className="flex items-start space-x-2">
-                  <IoLeaf className="text-green-500 mt-1 flex-shrink-0" />
-                  <div>
-                    <h4 className="font-medium text-sm text-gray-800">Growth Trend</h4>
-                    <p className="text-xs sm:text-sm text-gray-600">{yieldData.change}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="pt-2">
-                <div className="flex justify-between text-xs sm:text-sm">
-                  <span className="text-gray-500">Low</span>
-                  <span className="text-gray-500">Target</span>
-                  <span className="text-gray-500">High</span>
-                </div>
-                <div className="mt-1 h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-red-500 via-green-500 to-yellow-500" style={{ width: '100%' }}></div>
-                </div>
-                <div className="mt-1 h-2 sm:h-3 w-1 bg-black mx-auto" style={{ marginLeft: `${yieldData.current}%` }}></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> */}
     </div>
   );
 };
