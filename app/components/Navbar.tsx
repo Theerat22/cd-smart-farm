@@ -27,7 +27,7 @@ const Navbar: React.FC<NavbarProps> = ({ activePage, setActivePage }) => {
 
   const navItems: NavItem[] = [
     { icon: Home, label: 'Overview', page: 'overview' },
-    { icon: Zap, label: 'Devices', page: 'devices' },
+    { icon: Zap, label: 'Plants', page: 'plants' },
     { icon: BarChart, label: 'Analytics', page: 'analytics' },
     { icon: Thermometer, label: 'Sensors', page: 'sensors' },
     { icon: CloudLightning, label: 'Alerts', page: 'alerts' },

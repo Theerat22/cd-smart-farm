@@ -1,8 +1,88 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { IoWater, IoLeaf } from "react-icons/io5";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { db } from "@/app/api/firebaseConfig";
+import { get, query, ref, orderByKey, limitToLast } from "firebase/database";
+
+interface TDSData {
+  id: string;
+  data: any;
+}
 
 const FarmDashboard: React.FC = () => {
+
+  function convertThaiDate(timeStamp: string): Date | null {
+    try {
+      const [datePart, timePart] = timeStamp.split('---');
+  
+      if (!datePart || !timePart) {
+        return null;
+      }
+  
+      const [day, month, year] = datePart.split('/').map(Number);
+  
+      if (isNaN(day) || isNaN(month) || isNaN(year)) {
+        return null;
+      }
+      const [hours, minutes] = timePart.split(':').map(Number);
+  
+      if (isNaN(hours) || isNaN(minutes)) {
+        return null;
+      }
+      const dateWithTime = new Date(year, month - 1, day, hours, minutes);
+  
+      return dateWithTime;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  const [TDSData, setTDS] = useState<TDSData[]>([]);
+  
+  useEffect(() => {
+    
+    const fetchLatestTDSData = async () => {
+      try {
+        const TDSRef = query(ref(db, "tds"), orderByKey(), limitToLast(1));
+        const snapshot = await get(TDSRef);
+  
+        if (snapshot.exists()) {
+          const latestEntry = Object.entries(snapshot.val()).map(([id, data]) => ({
+            id,
+            data,
+          }));
+  
+          setTDS(latestEntry);
+          console.log("Fetched latest data:", latestEntry);
+        } else {
+          console.log("No data available");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+  
+    fetchLatestTDSData();
+
+    const intervalId = setInterval(() => {
+      fetchLatestTDSData();
+    }, 1000); 
+  
+    return () => clearInterval(intervalId);
+  
+  }, []);
+
+  const latestData = TDSData[0]?.data; 
+  const growthStatus = latestData?.Growth_Status;
+  const tds = latestData?.TDS;
+  const timeStamp = latestData?.TimeStamp;
+
+  const firebase = {
+    TDS: tds,
+    Growth_Status: growthStatus,
+    TimeStamp: timeStamp
+  }
+
 
   const soilData = {
     percentage: 78,
@@ -57,14 +137,15 @@ const FarmDashboard: React.FC = () => {
           : 'text-blue-600';
 
 
+
   return (
     <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
       <div className="flex items-center space-x-3 mb-4 sm:mb-8">
-        <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
-          <IoLeaf className="text-white text-xl" />
-        </div>
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Overview</h1>
       </div>
+
+      {/* TDS */}
+      
       
       {/* Top Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
@@ -78,11 +159,11 @@ const FarmDashboard: React.FC = () => {
                 </div>
                 <div>
                   <h2 className="font-bold text-lg sm:text-xl text-gray-800">คุณภาพน้ำ</h2>
-                  <p className="text-xs sm:text-sm text-gray-500">Last checked: {soilData.lastChecked}</p>
+                  <p className="text-xs sm:text-sm text-gray-500">Last checked: {firebase.TimeStamp}</p>
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-3xl sm:text-4xl font-bold text-gray-800">{soilData.percentage}<span className="text-lg sm:text-xl">%</span></div>
+                <div className="text-3xl sm:text-4xl font-bold text-gray-800">{firebase.TDS}</div>
                 <p className={`font-medium ${soilStatusColor}`}>{soilData.status}</p>
               </div>
             </div>
