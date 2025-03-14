@@ -10,8 +10,9 @@ interface TDSData {
 }
 
 const FarmDashboard: React.FC = () => {
-
-  function convertThaiDate(timeStamp: string): Date | null {
+  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  function convertThaiDate(timeStamp: string): string | null {
     try {
       const [datePart, timePart] = timeStamp.split('---');
   
@@ -29,9 +30,10 @@ const FarmDashboard: React.FC = () => {
       if (isNaN(hours) || isNaN(minutes)) {
         return null;
       }
-      const dateWithTime = new Date(year, month - 1, day, hours, minutes);
-  
-      return dateWithTime;
+      const dateWithTime = new Date(year, month, day, hours, minutes);
+      const UpdateDate = days[dateWithTime.getDay()] + " " + dateWithTime.getDate() + " " + months[dateWithTime.getMonth()] + " " + dateWithTime.getFullYear() + " " + dateWithTime.getHours() + ":" + dateWithTime.getMinutes();
+
+      return UpdateDate;
     } catch (error) {
       return null;
     }
@@ -43,7 +45,7 @@ const FarmDashboard: React.FC = () => {
     
     const fetchLatestTDSData = async () => {
       try {
-        const TDSRef = query(ref(db, "tds"), orderByKey(), limitToLast(1));
+        const TDSRef = query(ref(db, "pre-final"), orderByKey(), limitToLast(1));
         const snapshot = await get(TDSRef);
   
         if (snapshot.exists()) {
@@ -53,7 +55,7 @@ const FarmDashboard: React.FC = () => {
           }));
   
           setTDS(latestEntry);
-          console.log("Fetched latest data:", latestEntry);
+          // console.log("Fetched latest data:", latestEntry);
         } else {
           console.log("No data available");
         }
@@ -76,11 +78,13 @@ const FarmDashboard: React.FC = () => {
   const growthStatus = latestData?.Growth_Status;
   const tds = latestData?.TDS;
   const timeStamp = latestData?.TimeStamp;
+  const newTime = convertThaiDate(timeStamp);
+  console.log(newTime)
 
   const firebase = {
     TDS: tds,
     Growth_Status: growthStatus,
-    TimeStamp: timeStamp
+    TimeStamp: String(newTime)
   }
 
 
@@ -159,7 +163,7 @@ const FarmDashboard: React.FC = () => {
                 </div>
                 <div>
                   <h2 className="font-bold text-lg sm:text-xl text-gray-800">คุณภาพน้ำ</h2>
-                  <p className="text-xs sm:text-sm text-gray-500">Last checked: {firebase.TimeStamp}</p>
+                  <p className="text-xs sm:text-sm text-gray-500">Last checked: <b>{firebase.TimeStamp}</b> </p>
                 </div>
               </div>
               <div className="text-right">
@@ -194,11 +198,11 @@ const FarmDashboard: React.FC = () => {
                 </div>
                 <div>
                   <h2 className="font-bold text-lg sm:text-xl text-gray-800">การเจริญเติบโตของพืช</h2>
-                  <p className="text-xs sm:text-sm text-gray-500">Last updated: {cropData.lastChecked}</p>
+                  <p className="text-xs sm:text-sm text-gray-500">Last updated: <b>{firebase.TimeStamp}</b> </p>
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-3xl sm:text-4xl font-bold text-gray-800">{cropData.current}<span className="text-lg sm:text-xl">{cropData.unit}</span></div>
+                <div className="text-3xl sm:text-4xl font-bold text-gray-800">{firebase.Growth_Status}</div>
                 <p className={`font-medium ${cropStatusColor}`}>{cropData.status}</p>
               </div>
             </div>

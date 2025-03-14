@@ -3,7 +3,7 @@ import { getDatabase } from "firebase/database";
 
 // Firebase Configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyABXWcIXK7fo-ed0SJoBN8SR7HyYgddXu8",
+  apiKey: process.env.FIREBASE_API_KEY,
   authDomain: "cdsmartfarm.firebaseapp.com",
   databaseURL: "https://cdsmartfarm-default-rtdb.asia-southeast1.firebasedatabase.app/",
   projectId: "cdsmartfarm",
