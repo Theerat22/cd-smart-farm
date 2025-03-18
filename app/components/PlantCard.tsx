@@ -1,4 +1,4 @@
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import GreenOak from "@/app/dashboard/pages/img/Green-oak.png"
 interface ProfileCardProps {
     name: string;

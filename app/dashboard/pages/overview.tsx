@@ -4,9 +4,16 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { db } from "@/app/api/firebaseConfig";
 import { get, query, ref, orderByKey, limitToLast } from "firebase/database";
 
+
+interface TDSInfo {
+  Plants: number[];
+  TDS: number;
+  TimeStamp: string;
+}
+
 interface TDSData {
   id: string;
-  data: any;
+  data: TDSInfo;
 }
 
 const FarmDashboard: React.FC = () => {
@@ -34,7 +41,7 @@ const FarmDashboard: React.FC = () => {
       const UpdateDate = days[dateWithTime.getDay()] + " " + dateWithTime.getDate() + " " + months[dateWithTime.getMonth()] + " " + dateWithTime.getFullYear() + " " + dateWithTime.getHours() + ":" + dateWithTime.getMinutes();
 
       return UpdateDate;
-    } catch (error) {
+    } catch  {
       return null;
     }
   }
@@ -51,7 +58,7 @@ const FarmDashboard: React.FC = () => {
         if (snapshot.exists()) {
           const latestEntry = Object.entries(snapshot.val()).map(([id, data]) => ({
             id,
-            data,
+            data: data as TDSInfo,
           }));
   
           setTDS(latestEntry);
@@ -75,7 +82,6 @@ const FarmDashboard: React.FC = () => {
   }, []);
 
   const latestData = TDSData[0]?.data; 
-  const growthStatus = latestData?.Growth_Status;
   const tds = latestData?.TDS;
   const timeStamp = latestData?.TimeStamp;
   const newTime = convertThaiDate(timeStamp);
@@ -83,7 +89,6 @@ const FarmDashboard: React.FC = () => {
 
   const firebase = {
     TDS: tds,
-    Growth_Status: growthStatus,
     TimeStamp: String(newTime)
   }
 
@@ -202,7 +207,7 @@ const FarmDashboard: React.FC = () => {
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-3xl sm:text-4xl font-bold text-gray-800">{firebase.Growth_Status}</div>
+                <div className="text-3xl sm:text-4xl font-bold text-gray-800">{firebase.TDS}</div>
                 <p className={`font-medium ${cropStatusColor}`}>{cropData.status}</p>
               </div>
             </div>
