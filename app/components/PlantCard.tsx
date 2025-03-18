@@ -1,5 +1,5 @@
 import Image from "next/image";
-import GreenOak from "@/app/dashboard/pages/img/Green-oak.png"
+import GreenOak from "@/app/dashboard/pages/img/green-oakz-z6804221624-1.jpg"
 interface ProfileCardProps {
     name: string;
     growth: number;
