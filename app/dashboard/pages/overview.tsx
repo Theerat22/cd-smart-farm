@@ -1,24 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { IoWater, IoLeaf } from "react-icons/io5";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { IoWater, IoLeaf, IoWarning } from "react-icons/io5";
 import { db } from "@/app/api/firebaseConfig";
 import { get, query, ref, orderByKey, limitToLast } from "firebase/database";
+import PlantCard from '@/app/components/ui/PlantCard';
 
-
-interface TDSInfo {
-  Plants: number[];
-  TDS: number;
-  TimeStamp: string;
-}
-
+// Firebase type
 interface TDSData {
   id: string;
   data: TDSInfo;
 }
 
+// Data type
+interface TDSInfo {
+  Plants: number;
+  TDS: number;
+  TimeStamp: string;
+}
+
 const FarmDashboard: React.FC = () => {
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  
+  // Convert new Time 
   function convertThaiDate(timeStamp: string): string | null {
     try {
       const [datePart, timePart] = timeStamp.split('---');
@@ -38,7 +41,7 @@ const FarmDashboard: React.FC = () => {
         return null;
       }
       const dateWithTime = new Date(year, month, day, hours, minutes);
-      const UpdateDate = days[dateWithTime.getDay()] + " " + dateWithTime.getDate() + " " + months[dateWithTime.getMonth()] + " " + dateWithTime.getFullYear() + " " + dateWithTime.getHours() + ":" + dateWithTime.getMinutes();
+      const UpdateDate = days[dateWithTime.getDay()] + " " + dateWithTime.getDate() + " " + months[dateWithTime.getMonth()] + " " + dateWithTime.getFullYear() + " " + dateWithTime.getHours() + ":" + (dateWithTime.getMinutes() < 10 ? '0' : '') + dateWithTime.getMinutes();
 
       return UpdateDate;
     } catch  {
@@ -47,10 +50,13 @@ const FarmDashboard: React.FC = () => {
   }
 
   const [TDSData, setTDS] = useState<TDSData[]>([]);
-  
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+
+  // Fetching Data from Firebase
   useEffect(() => {
-    
     const fetchLatestTDSData = async () => {
+      setIsLoading(true);
       try {
         const TDSRef = query(ref(db, "pre-final"), orderByKey(), limitToLast(1));
         const snapshot = await get(TDSRef);
@@ -62,12 +68,13 @@ const FarmDashboard: React.FC = () => {
           }));
   
           setTDS(latestEntry);
-          // console.log("Fetched latest data:", latestEntry);
         } else {
           console.log("No data available");
         }
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
   
@@ -75,185 +82,213 @@ const FarmDashboard: React.FC = () => {
 
     const intervalId = setInterval(() => {
       fetchLatestTDSData();
-    }, 1000); 
+    }, 5000);
   
     return () => clearInterval(intervalId);
-  
   }, []);
 
-  const latestData = TDSData[0]?.data; 
-  const tds = latestData?.TDS;
-  const timeStamp = latestData?.TimeStamp;
-  const newTime = convertThaiDate(timeStamp);
-  console.log(newTime)
 
+  // Variable Meter 
+  const latestData = TDSData[0]?.data; 
+  const tds = latestData?.TDS || 0;
+  const plants = latestData?.Plants || 0;
+  const timeStamp = latestData?.TimeStamp;
+  const newTime = convertThaiDate(timeStamp) || 'ไม่มีข้อมูล';
+
+
+  // Set Firebase
   const firebase = {
     TDS: tds,
+    Plants: plants,
     TimeStamp: String(newTime)
-  }
-
-
-  const soilData = {
-    percentage: 78,
-    status: 'Good',
-    lastChecked: '3 hours ago',
-    metrics: [
-      { name: 'Moisture', value: '62%', ideal: '60-80%' },
-      { name: 'pH Level', value: '6.8', ideal: '6.0-7.0' },
-      { name: 'Nutrients', value: '72%', ideal: '65-85%' }
-    ]
   };
 
-  const cropData = {
-    current: 86,
-    unit: '%',
-    status: 'Optimal',
-    lastChecked: '1 hour ago',
-    history: [75, 79, 82, 84, 86]
+  // TDS status 
+  const getTdsStatus = (tds: number) => {
+    if (tds < 200) return { status: 'ต่ำเกินไป', color: 'text-yellow-600' };
+    if (tds > 800) return { status: 'สูงเกินไป', color: 'text-red-600' };
+    return { status: 'เหมาะสม', color: 'text-green-600' };
   };
 
-  const growthData = [
-    { date: 'Jan 5', percentage: 15 },
-    { date: 'Jan 12', percentage: 28 },
-    { date: 'Jan 19', percentage: 42 },
-    { date: 'Jan 26', percentage: 55 },
-    { date: 'Feb 2', percentage: 63 },
-    { date: 'Feb 9', percentage: 78 },
-    { date: 'Feb 16', percentage: 90 },
-    { date: 'Feb 23', percentage: 95 }
+  const tdsStatus = getTdsStatus(tds);
+
+  const plantData = [
+    { name: 'green oak1', growth: 3 },
+    { name: 'green oak2', growth: 3 },
+    { name: 'green oak3', growth: 2 },
+    { name: 'green oak4', growth: 2 },
+    { name: 'green oak5', growth: 1 },
+    { name: 'green oak6', growth: 1 },
+    { name: 'green oak7', growth: 1 },
+    { name: 'green oak8', growth: 1 },
+    { name: 'green oak9', growth: 1 },
+    { name: 'green oak10', growth: 1 },
   ];
 
-  const soilStatusColor = 
-    soilData.status.toLowerCase() === 'good' || 
-    soilData.status.toLowerCase() === 'optimal' || 
-    soilData.status.toLowerCase() === 'normal' 
-      ? 'text-green-600' 
-      : soilData.status.toLowerCase() === 'warning' 
-        ? 'text-yellow-600' 
-        : soilData.status.toLowerCase() === 'critical' 
-          ? 'text-red-600' 
-          : 'text-blue-600';
+  const plantsByGrowth = plantData.reduce((acc, plant) => {
+    acc[plant.growth] = (acc[plant.growth] || 0) + 1;
+    return acc;
+  }, {} as Record<number, number>);
 
-  const cropStatusColor = 
-    cropData.status.toLowerCase() === 'good' || 
-    cropData.status.toLowerCase() === 'optimal' || 
-    cropData.status.toLowerCase() === 'normal' 
-      ? 'text-green-600' 
-      : cropData.status.toLowerCase() === 'warning' 
-        ? 'text-yellow-600' 
-        : cropData.status.toLowerCase() === 'critical' 
-          ? 'text-red-600' 
-          : 'text-blue-600';
-
-
+  const readyToHarvest = plantsByGrowth[3] || 0;
+  const growing = plantsByGrowth[2] || 0;
+  const seedlings = plantsByGrowth[1] || 0;
 
   return (
-    <div className="p-4 sm:p-6 bg-gray-50 min-h-screen">
-      <div className="flex items-center space-x-3 mb-4 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Overview</h1>
+    <div className="p-4 sm:p-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center space-x-3">
+          <div className="bg-green-100 p-2 rounded-lg">
+            <IoLeaf className="text-2xl text-green-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">AI Plant Tracking</h1>
+            <p className="text-sm text-gray-500">อัปเดตล่าสุด: {firebase.TimeStamp}</p>
+          </div>
+        </div>
+        {isLoading ? (
+          <div className="animate-pulse bg-blue-100 py-1 px-3 rounded-full text-blue-700 text-sm font-medium">
+            กำลังอัปเดต...
+          </div>
+        ) : (
+          <div className="bg-green-100 py-1 px-3 rounded-full text-green-700 text-sm font-medium">
+            ออนไลน์
+          </div>
+        )}
       </div>
 
-      {/* TDS */}
-      
-      
-      {/* Top Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-        {/* Soil Health Card */}
-        <div className="bg-white rounded-xl shadow-md overflow-hidden transition-all hover:shadow-lg">
-          <div className="p-4 sm:p-6 border-b border-gray-100">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
-              <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="bg-blue-50 p-2 sm:p-3 rounded-lg">
-                  <IoWater className="text-2xl sm:text-3xl text-blue-600" />
-                </div>
-                <div>
-                  <h2 className="font-bold text-lg sm:text-xl text-gray-800">คุณภาพน้ำ</h2>
-                  <p className="text-xs sm:text-sm text-gray-500">Last checked: <b>{firebase.TimeStamp}</b> </p>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-3xl sm:text-4xl font-bold text-gray-800">{firebase.TDS}</div>
-                <p className={`font-medium ${soilStatusColor}`}>{soilData.status}</p>
-              </div>
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+
+        {/* TDS Card */}
+        <div className="bg-white rounded-xl shadow-md p-4 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="bg-blue-100 p-3 rounded-full">
+              <IoWater className="text-xl text-blue-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">คุณภาพน้ำ</p>
+              <p className="text-xl font-bold">{tds} ppm</p>
             </div>
           </div>
-          <div className="p-4 sm:p-6">
-            <h3 className="text-xs sm:text-sm font-medium text-gray-500 mb-3">ค่าวัดคุณภาพน้ำ</h3>
-            <div className="space-y-3 sm:space-y-4">
-              {soilData.metrics.map((metric, index) => (
-                <div key={index} className="flex justify-between">
-                  <span className="text-sm sm:text-base text-gray-600">{metric.name}</span>
-                  <div className="text-right">
-                    <span className="text-sm sm:text-base font-medium text-gray-800">{metric.value}</span>
-                    <span className="text-xs text-gray-500 ml-2">({metric.ideal})</span>
-                  </div>
-                </div>
-              ))}
+          <span className={`px-2 py-1 rounded-full text-xs font-medium ${tdsStatus.color.replace('text-', 'bg-').replace('-600', '-100')}`}>
+            {tdsStatus.status}
+          </span>
+        </div>
+        
+        {/* Plants Card */}
+        <div className="bg-white rounded-xl shadow-md p-4 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="bg-green-100 p-3 rounded-full">
+              <IoLeaf className="text-xl text-green-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">พร้อมเก็บเกี่ยว</p>
+              <p className="text-xl font-bold">{readyToHarvest} ต้น</p>
+            </div>
+          </div>
+          <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+            {growing} ต้นกำลังเติบโต
+          </span>
+        </div>
+        
+        
+        {/* <div className="bg-white rounded-xl shadow-md p-4 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="bg-yellow-100 p-3 rounded-full">
+              <IoAlarm className="text-xl text-yellow-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">เวลาที่เหลือ</p>
+              <p className="text-xl font-bold">7 วัน</p>
+            </div>
+          </div>
+          <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
+            รอบถัดไป
+          </span>
+        </div> */}
+
+      </div>
+
+      {/* Plants Section */}
+      <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+        <div className="p-4 sm:p-6 border-b border-gray-100">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-3">
+              <div className="bg-green-50 p-3 rounded-lg">
+                <IoLeaf className="text-2xl text-green-600" />
+              </div>
+              <h2 className="font-bold text-xl text-gray-800">สถานะต้นไม้</h2>
+            </div>
+            <div className="flex space-x-2">
+              <div className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                พร้อมเก็บเกี่ยว: {readyToHarvest}
+              </div>
+              <div className="px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
+                กำลังเติบโต: {growing}
+              </div>
+              <div className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                เริ่มต้น: {seedlings}
+              </div>
             </div>
           </div>
         </div>
         
-        {/* Crop Health Card */}
-        <div className="bg-white rounded-xl shadow-md overflow-hidden transition-all hover:shadow-lg">
-          <div className="p-4 sm:p-6 border-b border-gray-100">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
-              <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="bg-green-50 p-2 sm:p-3 rounded-lg">
-                  <IoLeaf className="text-2xl sm:text-3xl text-green-600" />
-                </div>
-                <div>
-                  <h2 className="font-bold text-lg sm:text-xl text-gray-800">การเจริญเติบโตของพืช</h2>
-                  <p className="text-xs sm:text-sm text-gray-500">Last updated: <b>{firebase.TimeStamp}</b> </p>
-                </div>
+        <div className="p-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+            {plantData.map((plant, index) => (
+              <div key={index} className={plant.growth < 3 ? "opacity-50" : ""}>
+                <PlantCard 
+                  name={plant.name}
+                  growth={plant.growth}
+                />
               </div>
-              <div className="text-right">
-                <div className="text-3xl sm:text-4xl font-bold text-gray-800">{firebase.TDS}</div>
-                <p className={`font-medium ${cropStatusColor}`}>{cropData.status}</p>
-              </div>
-            </div>
-          </div>
-          <div className="p-4 sm:p-6">
-            <h3 className="text-xs sm:text-sm font-medium text-gray-500 mb-3">อัตราการเติบโต</h3>
-            <div className="flex items-end h-32 sm:h-32 space-x-1 sm:space-x-2">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  data={growthData}
-                  margin={{
-                    top: 5,
-                    right: 10,
-                    left: 10,
-                    bottom: 5,
-                  }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="date" 
-                    tick={{ fontSize: 12 }}
-                    angle={-45}
-                    textAnchor="end"
-                    height={60}
-                  />
-                  <YAxis 
-                    domain={[0, 100]}
-                    unit="%"
-                    tick={{ fontSize: 12 }}
-                  />
-                  <Tooltip formatter={(value) => [`${value}%`, 'Growth']} />
-                  <Line 
-                    type="monotone" 
-                    dataKey="percentage" 
-                    stroke="#4ade80" 
-                    strokeWidth={2}
-                    dot={{ stroke: '#16a34a', strokeWidth: 2, r: 4, fill: '#4ade80' }}
-                    activeDot={{ r: 6, stroke: '#16a34a', strokeWidth: 2, fill: '#4ade80' }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+            ))}
           </div>
         </div>
       </div>
       
+      {/* Alerts Section */}
+      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <div className="p-4 sm:p-6 border-b border-gray-100">
+          <div className="flex items-center space-x-3">
+            <div className="bg-yellow-50 p-3 rounded-lg">
+              <IoWarning className="text-2xl text-yellow-600" />
+            </div>
+            <h2 className="font-bold text-xl text-gray-800">การแจ้งเตือน</h2>
+          </div>
+        </div>
+        
+        <div className="p-4 sm:p-6">
+          <div className="space-y-3">
+            <div className="flex items-center p-3 bg-yellow-50 rounded-lg border border-yellow-100">
+              <div className="bg-yellow-100 p-2 rounded-full mr-3">
+                <IoWater className="text-yellow-600" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-800">ความเข้มข้นของสารอาหารต่ำ</p>
+                <p className="text-xs text-gray-500">แนะนำให้เพิ่มสารอาหารภายใน 24 ชั่วโมง</p>
+              </div>
+              <div className="ml-auto">
+                <p className="text-xs text-gray-500">1 ชั่วโมงที่แล้ว</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center p-3 bg-blue-50 rounded-lg border border-blue-100">
+              <div className="bg-blue-100 p-2 rounded-full mr-3">
+                <IoLeaf className="text-blue-600" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-800">ต้นไม้พร้อมเก็บเกี่ยว</p>
+                <p className="text-xs text-gray-500">มีต้นไม้ 2 ต้นที่พร้อมเก็บเกี่ยว</p>
+              </div>
+              <div className="ml-auto">
+                <p className="text-xs text-gray-500">3 ชั่วโมงที่แล้ว</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

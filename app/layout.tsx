@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CD Smart Farm",
-  description: "ระบบ tracking ฟาร์ม",
+  title: "AI Plant Tracking",
+  description: "ระบบติดตามการเจริญเติบโตของผักไฮโดรโปนิกส์ด้วยเทคโนโลยีปัญญาประดิษฐ์โดยใช้ KidBright µAI",
 };
 
 export default function RootLayout({

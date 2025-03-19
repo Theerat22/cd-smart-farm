@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
 import { type LucideIcon } from 'lucide-react';
-import { PiPlant } from "react-icons/pi";
 import { 
   Home, 
-  BarChart, 
-  Settings, 
   Zap, 
-  Thermometer, 
-  CloudLightning, 
   Menu, 
   X 
 } from 'lucide-react';
@@ -27,11 +22,7 @@ const Navbar: React.FC<NavbarProps> = ({ activePage, setActivePage }) => {
 
   const navItems: NavItem[] = [
     { icon: Home, label: 'Overview', page: 'overview' },
-    { icon: Zap, label: 'Plants', page: 'plants' },
-    { icon: BarChart, label: 'Analytics', page: 'analytics' },
-    { icon: Thermometer, label: 'Sensors', page: 'sensors' },
-    { icon: CloudLightning, label: 'Alerts', page: 'alerts' },
-    { icon: Settings, label: 'Settings', page: 'settings' }
+    { icon: Zap, label: 'Plants', page: 'plants' }
   ];
 
   return (
@@ -41,8 +32,7 @@ const Navbar: React.FC<NavbarProps> = ({ activePage, setActivePage }) => {
           {/* Logo Section */}
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
-              <PiPlant className="h-8 w-8 text-green-600" />
-              <span className="ml-2 text-xl font-bold text-gray-800">CD Smart Farm</span>
+              <span className="ml-2 text-xl font-bold text-gray-800">Chitralada School</span>
             </div>
           </div>
 

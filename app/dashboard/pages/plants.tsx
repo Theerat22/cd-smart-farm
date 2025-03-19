@@ -1,5 +1,5 @@
 import React from 'react';
-import PlantCard from '@/app/components/PlantCard';
+import PlantCard from '@/app/components/ui/PlantCard';
 
 const PlantsDashboard: React.FC = () => {
     const plants = [
