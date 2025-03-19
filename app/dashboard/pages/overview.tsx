@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { IoWater, IoLeaf, IoWarning } from "react-icons/io5";
+import { IoWater, IoLeaf } from "react-icons/io5";
 import { db } from "@/app/api/firebaseConfig";
 import { get, query, ref, orderByKey, limitToLast } from "firebase/database";
 import PlantCard from '@/app/components/ui/PlantCard';
@@ -15,6 +15,11 @@ interface TDSInfo {
   Plants: number;
   TDS: number;
   TimeStamp: string;
+}
+
+interface Plant {
+  name: string;
+  growth: number
 }
 
 const FarmDashboard: React.FC = () => {
@@ -48,6 +53,21 @@ const FarmDashboard: React.FC = () => {
       return null;
     }
   }
+
+  function updatePlantData(plantData: Plant[], plants: number): Plant[] {
+    const updatedData: Plant[] = [...plantData];
+    
+    updatedData.forEach(plant => {
+      plant.growth = 1;
+    });
+    
+    for (let i = 0; i < Math.min(plants, updatedData.length); i++) {
+      updatedData[i].growth = 3;
+    }
+    
+    return updatedData;
+  }
+
 
   const [TDSData, setTDS] = useState<TDSData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -113,10 +133,10 @@ const FarmDashboard: React.FC = () => {
   const tdsStatus = getTdsStatus(tds);
 
   const plantData = [
-    { name: 'green oak1', growth: 3 },
-    { name: 'green oak2', growth: 3 },
-    { name: 'green oak3', growth: 2 },
-    { name: 'green oak4', growth: 2 },
+    { name: 'green oak1', growth: 1 },
+    { name: 'green oak2', growth: 1 },
+    { name: 'green oak3', growth: 1 },
+    { name: 'green oak4', growth: 1 },
     { name: 'green oak5', growth: 1 },
     { name: 'green oak6', growth: 1 },
     { name: 'green oak7', growth: 1 },
@@ -125,14 +145,16 @@ const FarmDashboard: React.FC = () => {
     { name: 'green oak10', growth: 1 },
   ];
 
+  const newPlantData = updatePlantData(plantData, plants);
+
   const plantsByGrowth = plantData.reduce((acc, plant) => {
     acc[plant.growth] = (acc[plant.growth] || 0) + 1;
     return acc;
   }, {} as Record<number, number>);
 
   const readyToHarvest = plantsByGrowth[3] || 0;
-  const growing = plantsByGrowth[2] || 0;
-  const seedlings = plantsByGrowth[1] || 0;
+  // const growing = plantsByGrowth[2] || 0;
+  // const seedlings = plantsByGrowth[1] || 0;
 
   return (
     <div className="p-4 sm:p-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
@@ -147,9 +169,9 @@ const FarmDashboard: React.FC = () => {
           </div>
         </div>
         {isLoading ? (
-          <div className="animate-pulse bg-blue-100 py-1 px-3 rounded-full text-blue-700 text-sm font-medium">
-            กำลังอัปเดต...
-          </div>
+          <div className="bg-green-100 py-1 px-3 rounded-full text-green-700 text-sm font-medium">
+          ออนไลน์
+        </div>
         ) : (
           <div className="bg-green-100 py-1 px-3 rounded-full text-green-700 text-sm font-medium">
             ออนไลน์
@@ -187,9 +209,9 @@ const FarmDashboard: React.FC = () => {
               <p className="text-xl font-bold">{readyToHarvest} ต้น</p>
             </div>
           </div>
-          <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+          {/* <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
             {growing} ต้นกำลังเติบโต
-          </span>
+          </span> */}
         </div>
         
         
@@ -218,25 +240,25 @@ const FarmDashboard: React.FC = () => {
               <div className="bg-green-50 p-3 rounded-lg">
                 <IoLeaf className="text-2xl text-green-600" />
               </div>
-              <h2 className="font-bold text-xl text-gray-800">สถานะต้นไม้</h2>
+              <h2 className="font-bold text-xl text-gray-800">Green Oak</h2>
             </div>
             <div className="flex space-x-2">
               <div className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
                 พร้อมเก็บเกี่ยว: {readyToHarvest}
               </div>
-              <div className="px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
+              {/* <div className="px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
                 กำลังเติบโต: {growing}
               </div>
               <div className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
                 เริ่มต้น: {seedlings}
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
         
         <div className="p-6">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-            {plantData.map((plant, index) => (
+            {newPlantData.map((plant, index) => (
               <div key={index} className={plant.growth < 3 ? "opacity-50" : ""}>
                 <PlantCard 
                   name={plant.name}
@@ -249,7 +271,7 @@ const FarmDashboard: React.FC = () => {
       </div>
       
       {/* Alerts Section */}
-      <div className="bg-white rounded-xl shadow-md overflow-hidden">
+      {/* <div className="bg-white rounded-xl shadow-md overflow-hidden">
         <div className="p-4 sm:p-6 border-b border-gray-100">
           <div className="flex items-center space-x-3">
             <div className="bg-yellow-50 p-3 rounded-lg">
@@ -287,8 +309,9 @@ const FarmDashboard: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </div> */}
+      {/* </div> */}
+
     </div>
   );
 };
