@@ -189,7 +189,7 @@ const FarmDashboard: React.FC = () => {
               <IoWater className="text-xl text-blue-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">คุณภาพน้ำ</p>
+              <p className="text-sm text-gray-500">จำนวนปุ๋ย</p>
               <p className="text-xl font-bold">{tds} ppm</p>
             </div>
           </div>
