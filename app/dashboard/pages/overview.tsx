@@ -125,9 +125,9 @@ const FarmDashboard: React.FC = () => {
 
   // TDS status 
   const getTdsStatus = (tds: number) => {
-    if (tds < 200) return { status: 'ต่ำเกินไป', color: 'text-yellow-600' };
-    if (tds > 800) return { status: 'สูงเกินไป', color: 'text-red-600' };
-    return { status: 'เหมาะสม', color: 'text-green-600' };
+    if (tds >= 1200) return { status: 'คุณภาพดี', color: 'text-green-600' };
+    if (tds >= 900) return { status: 'ปกติ', color: 'text-green-600' };
+    return { status: 'ควรปรับปรุง', color: 'text-red-600' };
   };
 
   const tdsStatus = getTdsStatus(tds);
@@ -160,9 +160,16 @@ const FarmDashboard: React.FC = () => {
     <div className="p-4 sm:p-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-3">
-          <div className="bg-green-100 p-2 rounded-lg">
-            <IoLeaf className="text-2xl text-green-600" />
+
+          <div className="flex flex-row">
+            <div className="bg-green-50 p-3 rounded-lg">
+              <IoLeaf className="text-2xl text-green-600" />
+            </div>
+            <div className="bg-blue-50 p-3 rounded-lg">
+              <IoWater className="text-2xl text-blue-600" />
+            </div>
           </div>
+
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">AI Plant Tracking</h1>
             <p className="text-sm text-gray-500">อัปเดตล่าสุด: {firebase.TimeStamp}</p>
@@ -189,13 +196,12 @@ const FarmDashboard: React.FC = () => {
               <IoWater className="text-xl text-blue-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">จำนวนปุ๋ย</p>
-              <p className="text-xl font-bold">{tds} ppm</p>
+              <p className="text-sm text-gray-500">ปริมาณสารอาหาร</p>
+              <p className={`text-lg font-bold ${tdsStatus.color}`}>
+                {tdsStatus.status}
+                </p>
             </div>
           </div>
-          <span className={`px-2 py-1 rounded-full text-xs font-medium ${tdsStatus.color.replace('text-', 'bg-').replace('-600', '-100')}`}>
-            {tdsStatus.status}
-          </span>
         </div>
         
         {/* Plants Card */}
