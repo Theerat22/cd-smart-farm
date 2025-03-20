@@ -112,6 +112,8 @@ const FarmDashboard: React.FC = () => {
   const latestData = TDSData[0]?.data; 
   const tds = latestData?.TDS || 0;
   const plants = latestData?.Plants || 0;
+  // const tds = 1200;
+  // const plants = 3;
   const timeStamp = latestData?.TimeStamp;
   const newTime = convertThaiDate(timeStamp) || 'ไม่มีข้อมูล';
 
@@ -196,7 +198,7 @@ const FarmDashboard: React.FC = () => {
               <IoWater className="text-xl text-blue-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">ปริมาณสารอาหาร</p>
+              <p className="text-sm text-gray-500">ระดับคุณภาพสารอาหาร</p>
               <p className={`text-lg font-bold ${tdsStatus.color}`}>
                 {tdsStatus.status}
                 </p>
