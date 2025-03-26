@@ -132,8 +132,8 @@ const FarmDashboard: React.FC = () => {
 
   // TDS status 
   const getTdsStatus = (tds: number) => {
-    if (tds >= 1700) return { status: 'คุณภาพดี', color: 'text-green-600' };
-    if (tds >= 900) return { status: 'คุณภาพปานกลาง', color: 'text-green-600' };
+    if (tds >= 1200) return { status: 'คุณภาพดี', color: 'text-green-600' };
+    if (tds >= 900) return { status: 'คุณภาพปานกลาง', color: 'text-yellow-500' };
     return { status: 'ควรปรับปรุง', color: 'text-red-600' };
   };
 
