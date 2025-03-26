@@ -140,16 +140,16 @@ const FarmDashboard: React.FC = () => {
   const tdsStatus = getTdsStatus(tds);
 
   const plantData = [
-    { name: 'plant', growth: 1 },
-    { name: 'plant', growth: 1 },
-    { name: 'plant', growth: 1 },
-    { name: 'plant', growth: 1 },
-    { name: 'plant', growth: 1 },
-    { name: 'plant', growth: 1 },
-    { name: 'plant', growth: 1 },
-    { name: 'plant', growth: 1 },
-    { name: 'plant', growth: 1 },
-    { name: 'plant', growth: 1 },
+    { name: 'Plant', growth: 1 },
+    { name: 'Plant', growth: 1 },
+    { name: 'Plant', growth: 1 },
+    { name: 'Plant', growth: 1 },
+    { name: 'Plant', growth: 1 },
+    { name: 'Plant', growth: 1 },
+    { name: 'Plant', growth: 1 },
+    { name: 'Plant', growth: 1 },
+    { name: 'Plant', growth: 1 },
+    { name: 'Plant', growth: 1 },
   ];
 
   const newPlantData = updatePlantData(plantData, plants);
@@ -253,7 +253,7 @@ const FarmDashboard: React.FC = () => {
               <div className="bg-green-50 p-3 rounded-lg">
                 <IoLeaf className="text-2xl text-green-600" />
               </div>
-              <h2 className="font-bold text-xl text-gray-800">Plant</h2>
+              <h2 className="font-bold text-xl text-gray-800">Plants</h2>
             </div>
             <div className="flex space-x-2">
               <div className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
