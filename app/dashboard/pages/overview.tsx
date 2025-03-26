@@ -23,33 +23,26 @@ interface Plant {
 }
 
 const FarmDashboard: React.FC = () => {
-  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  
+
   // Convert new Time 
   function convertThaiDate(timeStamp: string): string | null {
     try {
-      const [datePart, timePart] = timeStamp.split('---');
+      const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   
-      if (!datePart || !timePart) {
-        return null;
-      }
+      const [datePart, timePart] = timeStamp.split('---').map(part => part.trim());
+  
+      if (!datePart || !timePart) return null;
   
       const [day, month, year] = datePart.split('/').map(Number);
+      const [hours, minutes] = timePart.split('.').map(Number);
   
-      if (isNaN(day) || isNaN(month) || isNaN(year)) {
-        return null;
-      }
-      const [hours, minutes] = timePart.split(':').map(Number);
+      if (isNaN(day) || isNaN(month) || isNaN(year) || isNaN(hours) || isNaN(minutes)) return null;
   
-      if (isNaN(hours) || isNaN(minutes)) {
-        return null;
-      }
-      const dateWithTime = new Date(year, month, day, hours, minutes);
-      const UpdateDate = days[dateWithTime.getDay()] + " " + dateWithTime.getDate() + " " + months[dateWithTime.getMonth()] + " " + dateWithTime.getFullYear() + " " + dateWithTime.getHours() + ":" + (dateWithTime.getMinutes() < 10 ? '0' : '') + dateWithTime.getMinutes();
-
-      return UpdateDate;
-    } catch  {
+      const date = new Date(year, month - 1, day, hours, minutes);
+  
+      return `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+    } catch {
       return null;
     }
   }
@@ -67,6 +60,7 @@ const FarmDashboard: React.FC = () => {
     
     return updatedData;
   }
+  console.log(convertThaiDate("26 / 3 / 2025 --- 15.00"));
 
 
   const [TDSData, setTDS] = useState<TDSData[]>([]);
