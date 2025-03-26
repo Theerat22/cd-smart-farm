@@ -107,7 +107,7 @@ const FarmDashboard: React.FC = () => {
 
     const intervalId = setInterval(() => {
       fetchLatestTDSData();
-    }, 5000);
+    }, 2000);
   
     return () => clearInterval(intervalId);
   }, []);
